@@ -1,1 +1,1 @@
-<container type>: <command>
+web: python app.py
