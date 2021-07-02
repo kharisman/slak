@@ -13,7 +13,7 @@ jwt = JWTManager(app)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 #avaible mysql , sql , postgree, sqlserver , ect
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mysql@localhost/qqqqq' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://sql6422017:WeBMZp93h8@sql6.freesqldatabase.com/sql6422017'
 db = SQLAlchemy(app)
 
 #our model
@@ -31,6 +31,9 @@ class Users(db.Model):
     password = db.Column(db.String(225))
     status = db.Column(db.Integer)
 
+@app.route("/", methods=["GET"])
+def test():
+    return  jsonify({"msg": "Wellcome"}), 200
 # Create a route to authenticate your users and return JWTs. The
 # create_access_token() function is used to actually generate the JWT.
 @app.route("/login", methods=["POST"])
@@ -44,13 +47,13 @@ def login():
 
     user = Users.query.filter_by(username=username).first()
     if user is not None:
-        cek  = bcrypt.check_password_hash(user.password, password) 
+        cek  = bcrypt.check_password_hash(user.password, password)
         print(cek)
         if cek is not True :
-           return jsonify({"msg": "Password not match"}), 401 
+           return jsonify({"msg": "Password not match"}), 401
     else:
         return jsonify({"msg": "username not found"}), 401
-  
+
     access_token = create_access_token(identity=username)
     return jsonify(access_token=access_token)
 
@@ -64,12 +67,13 @@ def register():
     user = Users.query.filter_by(username=username).first()
     if user is not None:
         return jsonify({"msg": "Bad username aleready exist"}), 401
-   
+
+
     pw_hash = bcrypt.generate_password_hash(password)
-    
+
     save  = Users(username=username, password=pw_hash, status=1)
-    db.session.add(save)   
-    db.session.commit() 
+    db.session.add(save)
+    db.session.commit()
 
     return jsonify({"msg": "Register Success !"}), 200
 
